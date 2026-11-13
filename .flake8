@@ -1,0 +1,4 @@
+[flake8]
+# A8 code uses long OpenTelemetry import paths; 120 keeps them readable.
+max-line-length = 120
+exclude = .git,__pycache__,out,demo-vulnerable
