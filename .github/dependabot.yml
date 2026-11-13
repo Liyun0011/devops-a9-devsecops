@@ -1,0 +1,19 @@
+version: 2
+updates:
+  # Real app dependencies (OpenTelemetry)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  # Demo folder with deliberately old packages
+  - package-ecosystem: "pip"
+    directory: "/demo-vulnerable"
+    schedule:
+      interval: "weekly"
+
+  # Keep workflow actions (pinned to commit SHAs) up to date
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
