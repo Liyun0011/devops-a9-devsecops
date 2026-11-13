@@ -1,27 +1,29 @@
-# A9 (Grade A): small helper module with deliberate security smells.
-# flake8-bandit (S rules) should flag every marked line. Fixed in step 2.
-# The password below is a fake placeholder, not a real secret.
+# A9 (Grade A): fixed version of the helper module after reading flake8-bandit.
 import hashlib
-import random
-import subprocess
+import os
+import secrets
+import subprocess  # noqa: S404  reviewed: only used with a fixed argument list
 
-DB_PASSWORD = "admin123"          # S105: hardcoded password
-COLLECTOR_HOST = "0.0.0.0"        # S104: bind to all interfaces
+DB_PASSWORD = os.environ.get("DB_PASSWORD", "")      # fix S105: read from env
+COLLECTOR_HOST = os.environ.get("COLLECTOR_HOST", "127.0.0.1")  # fix S104
 
 
 def hash_token(token):
-    return hashlib.md5(token.encode()).hexdigest()   # S324: weak hash (MD5)
+    return hashlib.sha256(token.encode()).hexdigest()   # fix S324
 
 
 def make_order_id():
-    return random.randint(1000, 9999)   # S311: not cryptographically secure
+    return 1000 + secrets.randbelow(9000)   # fix S311: secrets module
 
 
 def check_collector(host):
-    # S602: shell=True + string concat -> command injection
-    return subprocess.call("ping -c 1 " + host, shell=True)
+    # fix S602: no shell, arguments passed as a list, so host cannot inject
+    # S603/S607 are flagged for any subprocess call; reviewed -> false positive
+    result = subprocess.run(["ping", "-c", "1", host], check=False)  # noqa: S603,S607
+    return result.returncode
 
 
 def charge(amount):
-    assert amount > 0                 # S101: assert is removed with python -O
+    if amount <= 0:                   # fix S101: real check, not assert
+        raise ValueError("amount must be positive")
     return amount
