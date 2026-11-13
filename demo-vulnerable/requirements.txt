@@ -1,5 +1,6 @@
 # DEMO ONLY - deliberately old versions with known CVEs, so Dependabot has
 # something to report. Never install or deploy this.
+# Scanned by Dependabot alerts (SCA) for DevOps A9.
 Flask==0.12.2
 requests==2.19.1
 urllib3==1.24.1
